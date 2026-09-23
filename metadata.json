@@ -1,0 +1,6 @@
+{
+  "name": "AWS SAA Exam Simulator",
+  "description": "Simulador de examen para AWS Certified Solutions Architect - Associate (SAA-C03) con retroalimentación inmediata, explicaciones por IA con Gemini, y soporte para idiomas: Inglés, Español y Mix.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

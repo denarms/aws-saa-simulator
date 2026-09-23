@@ -23,10 +23,11 @@ import {
   CheckCircle2, 
   XCircle, 
   ChevronLeft, 
-  ChevronRight, 
-  Bookmark, 
-  BookmarkCheck, 
-  RefreshCw, 
+  ChevronRight,
+  Bookmark,
+  BookmarkCheck,
+  RefreshCw,
+  X,
   AlertTriangle,
   Award,
   Sparkles,
@@ -126,6 +127,7 @@ export default function App() {
   // Collapsible sidebar states
   const [sidebarPinned, setSidebarPinned] = useState<boolean>(true);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   // Exam/practice attempt history — persisted separately from the live session.
   const [examHistory, setExamHistory] = useState<ExamHistoryEntry[]>(
@@ -473,22 +475,29 @@ export default function App() {
   return (
     <div className="w-full h-screen bg-slate-50 flex flex-col font-sans text-slate-800 overflow-hidden" id="main_wrapper">
       {/* Top Header Navigation */}
-      <header className="h-16 bg-[#232F3E] text-white flex items-center justify-between px-6 shrink-0 shadow-sm z-30">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab("dashboard")}>
-          <div className="bg-[#FF9900] p-1.5 rounded flex items-center justify-center">
+      <header className="h-16 bg-[#232F3E] text-white flex items-center justify-between px-3 md:px-6 shrink-0 shadow-sm z-50 relative">
+        <div
+          className="flex items-center gap-2 md:gap-3 cursor-pointer min-w-0"
+          onClick={() => { setActiveTab("dashboard"); setMobileMenuOpen(false); }}
+        >
+          <div className="bg-[#FF9900] p-1.5 rounded flex items-center justify-center shrink-0">
             <Sparkles className="w-5 h-5 text-[#232F3E] fill-current" />
           </div>
-          <div>
-            <span className="font-bold tracking-tight text-sm md:text-base leading-none block">
-              AWS Certified Solutions Architect <span className="text-[#FF9900] font-extrabold">Associate</span>
+          <div className="min-w-0 md:min-w-fit">
+            <span className="font-bold tracking-tight text-sm md:text-base leading-none block truncate md:whitespace-normal md:overflow-visible">
+              <span className="md:hidden">AWS SAA-C03</span>
+              <span className="hidden md:inline">
+                AWS Certified Solutions Architect <span className="text-[#FF9900] font-extrabold">Associate</span>
+              </span>
             </span>
-            <span className="text-[10px] text-slate-400 uppercase tracking-widest font-semibold block mt-0.5">
+            <span className="hidden sm:block text-[10px] text-slate-400 uppercase tracking-widest font-semibold mt-0.5">
               Simulador Certificación SAA-C03
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-4">
           {/* Header language switches */}
           <div className="flex items-center gap-1.5 bg-[#1F2937] p-1 rounded-lg border border-slate-700/80">
             <button
@@ -572,6 +581,99 @@ export default function App() {
             </button>
           </div>
         </div>
+
+        {/* Mobile menu toggle */}
+        <button
+          onClick={() => setMobileMenuOpen(o => !o)}
+          className="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-[#37475A] transition-colors shrink-0"
+          id="mobile_menu_toggle_btn"
+          aria-label="Abrir menú"
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 bg-[#232F3E] border-t border-slate-700/80 shadow-lg z-50 p-4 space-y-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="flex items-center gap-1.5 bg-[#1F2937] p-1 rounded-lg border border-slate-700/80 w-fit">
+              <button
+                onClick={() => setQuizLanguage("en")}
+                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                  quizLanguage === "en" ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-white"
+                }`}
+                id="lang_en_btn_mobile"
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setQuizLanguage("es")}
+                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                  quizLanguage === "es" ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-white"
+                }`}
+                id="lang_es_btn_mobile"
+              >
+                ES
+              </button>
+              <button
+                onClick={() => setQuizLanguage("mix")}
+                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+                  quizLanguage === "mix" ? "bg-white text-slate-900 shadow-sm" : "text-slate-400 hover:text-white"
+                }`}
+                id="lang_mix_btn_mobile"
+              >
+                MIX
+              </button>
+            </div>
+
+            {timerActive && (
+              <div className="flex items-center gap-2" id="header_timer_container_mobile">
+                <Clock className="w-4 h-4 text-[#FF9900]" />
+                <span className="font-mono font-bold text-sm tracking-widest text-[#FF9900]">
+                  {formatTime(timeRemaining)}
+                </span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              <button
+                onClick={() => { setActiveTab("dashboard"); setMobileMenuOpen(false); }}
+                className={`px-3.5 py-2.5 text-sm font-bold rounded-lg transition-colors flex items-center gap-2 ${
+                  activeTab === "dashboard" ? "bg-[#37475A] text-white" : "text-slate-300 hover:text-white"
+                }`}
+                id="nav_dashboard_btn_mobile"
+              >
+                <BarChart2 className="w-4 h-4" /> Inicio
+              </button>
+              <button
+                onClick={() => { setActiveTab("concepts"); setMobileMenuOpen(false); }}
+                className={`px-3.5 py-2.5 text-sm font-bold rounded-lg transition-colors flex items-center gap-2 ${
+                  activeTab === "concepts" ? "bg-[#37475A] text-[#FF9900]" : "text-slate-300 hover:text-white"
+                }`}
+                id="nav_concepts_btn_mobile"
+              >
+                <Layers className="w-4 h-4" /> Tarjetas Conceptos
+              </button>
+              <button
+                onClick={() => { setActiveTab("manager"); setMobileMenuOpen(false); }}
+                className={`px-3.5 py-2.5 text-sm font-bold rounded-lg transition-colors flex items-center gap-2 ${
+                  activeTab === "manager" ? "bg-[#37475A] text-[#FF9900]" : "text-slate-300 hover:text-white"
+                }`}
+                id="nav_manager_btn_mobile"
+              >
+                <Database className="w-4 h-4" /> Banco Preguntas ({questions.length})
+              </button>
+              <button
+                onClick={() => { setActiveTab("historial"); setMobileMenuOpen(false); }}
+                className={`px-3.5 py-2.5 text-sm font-bold rounded-lg transition-colors flex items-center gap-2 ${
+                  activeTab === "historial" ? "bg-[#37475A] text-[#FF9900]" : "text-slate-300 hover:text-white"
+                }`}
+                id="nav_historial_btn_mobile"
+              >
+                <History className="w-4 h-4" /> Historial{examHistory.length > 0 ? ` (${examHistory.length})` : ""}
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Container Work Area */}
